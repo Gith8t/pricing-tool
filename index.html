@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Meridian Pricing Tool</title>
+<style>
+  :root{
+    --sky:#0ea5e9;--sky-50:#e0f2fe;--ring:#bae6fd;
+    --border:#e5e7eb;--text:#111827;--muted:#6b7280;--panel:#ffffff
+  }
+  *{box-sizing:border-box} body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;margin:0;background:#fff;color:var(--text)}
+  .wrap{max-width:1100px;margin:0 auto;padding:24px}
+  h1{font-size:28px;margin:0 0 6px 0} .sub{color:#64748b;margin:0 0 20px 0}
+  .steps{display:flex;gap:12px;justify-content:center;margin:10px 0 24px}
+  .step{display:flex;align-items:center;gap:10px;font-size:14px}
+  .dot{width:34px;height:34px;display:grid;place-items:center;border-radius:999px;background:#e5e7eb;color:#111;font-weight:600}
+  .dot.active{background:var(--sky);color:#fff}
+  .line{width:42px;height:1px;background:#d1d5db}
+  .grid{display:grid;gap:20px}
+  @media(min-width:980px){.grid{grid-template-columns:1fr 1fr}}
+  .card{border:1px solid var(--border);border-radius:16px;box-shadow:0 1px 4px rgba(0,0,0,.04);background:var(--panel)}
+  .card .hd{padding:18px 20px 0 20px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:12px}
+  .card .title{padding:0 20px 8px 20px;font-size:20px;font-weight:700}
+  .card .body{padding:0 20px 20px 20px}
+  .muted{color:var(--muted);font-size:14px}
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tile{border:1px solid var(--border);border-radius:14px;padding:16px;text-align:left;cursor:pointer;transition:.15s;background:#fff}
+  .tile:hover{box-shadow:0 2px 10px rgba(0,0,0,.06)}
+  .tile.sel{border-color:var(--sky);background:var(--sky-50);box-shadow:0 0 0 3px var(--ring)}
+  .tile .badge{font-size:12px;padding:3px 8px;border-radius:999px;background:#f3f4f6;color:#374151}
+  .tile.sel .badge{background:var(--sky);color:#fff}
+  .btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);background:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}
+  .btn.primary{background:var(--sky);color:#fff;border-color:var(--sky)} .btn+ .btn{margin-left:8px}
+  .row{margin:14px 0}
+  .opts{display:grid;gap:8px} .opts.cols-3{grid-template-columns:1fr 1fr 1fr} .opts.cols-2{grid-template-columns:1fr 1fr}
+  .opt{border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center;cursor:pointer}
+  .opt.sel{border-color:var(--sky);background:var(--sky-50);box-shadow:0 0 0 3px var(--ring)}
+  .sliderRow{display:flex;gap:10px;align-items:center}
+  .sliderRow input[type=range]{flex:1}
+  .chip{font-size:13px;font-weight:700}
+  .flex{display:flex;justify-content:space-between;align-items:center}
+  .switch{position:relative;width:44px;height:26px;border-radius:13px;background:#e5e7eb;cursor:pointer;display:inline-block}
+  .switch:before{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:999px;background:#fff;transition:.15s}
+  .switch.on{background:var(--sky)} .switch.on:before{left:21px}
+  .pill{background:var(--sky-50);padding:14px 22px;border-radius:16px;text-align:center}
+  .stickyBar{position:sticky;bottom:16px;background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 30px rgba(2,6,23,.08);padding:14px;max-width:780px;margin:26px auto 0}
+  .divider{height:1px;background:var(--border);margin:14px 0}
+  .fine{font-size:12px;color:#64748b}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Get an Instant Estimate</h1>
+  <p class="sub">Transparent pricing for Meridian Accounting & Advisory</p>
+
+  <div class="steps">
+    <div class="step"><div class="dot dot1 active">1</div><span class="label sm">Get Estimate</span><div class="line"></div></div>
+    <div class="step"><div class="dot dot2">2</div><span class="label sm">Submit Details</span><div class="line"></div></div>
+    <div class="step"><div class="dot dot3">3</div><span class="label sm">Book Consultation</span></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="hd">Step 01</div>
+      <div class="title">Select Service</div>
+      <div class="body">
+        <div class="tiles">
+          <div class="tile" data-svc="taxPrep"><div class="flex"><div><div class="chip">Tax Preparation</div><div class="muted">Click to select</div></div><span class="badge">Add</span></div></div>
+          <div class="tile" data-svc="taxPlan"><div class="flex"><div><div class="chip">Tax Planning</div><div class="muted">Click to select</div></div><span class="badge">Add</span></div></div>
+          <div class="tile sel" data-svc="books"><div class="flex"><div><div class="chip">Bookkeeping</div><div class="muted">Click to select</div></div><span class="badge">Selected</span></div></div>
+        </div>
+        <div class="row flex" style="margin-top:16px">
+          <button class="btn" id="btnStep1">Step 1</button>
+          <button class="btn primary" id="btnCont1">Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="hd">Step 02</div>
+      <div class="title">Add Some Additional Details</div>
+      <div class="body" id="detailsBody">
+        <div id="bkDisabled" class="muted" style="display:none">Enable Bookkeeping in Step 1 to configure bookkeeping details.</div>
+        <div id="bkForm">
+          <div class="row">
+            <div class="muted" style="font-weight:600;margin-bottom:6px">Annual Revenue</div>
+            <div class="sliderRow"><input type="range" id="rev" min="1000" max="2500000" step="1000" value="1000" /><div id="revVal" style="width:120px;text-align:right;font-weight:700">$1,000</div></div>
+          </div>
+
+          <div class="row">
+            <div class="muted" style="font-weight:600;margin-bottom:6px">Update cadence</div>
+            <div class="opts cols-3" id="freq">
+              <div class="opt sel">Monthly</div>
+              <div class="opt">Quarterly</div>
+              <div class="opt">Annually</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="muted" style="font-weight:600;margin-bottom:6px">Connected accounts in use</div>
+            <div class="opts cols-2" id="accts">
+              <div class="opt sel">1-5</div>
+              <div class="opt">6-10</div>
+            </div>
+          </div>
+
+          <div class="row" style="display:grid;grid-template-columns:1fr;gap:12px">
+            <div class="card" style="border-radius:12px">
+              <div class="body flex">
+                <div>
+                  <div style="font-weight:600">Bill Pay and Invoicing</div>
+                  <div class="muted">Adds $200 monthly</div>
+                </div>
+                <div class="switch" id="bill"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row flex">
+            <button class="btn" id="btnBack2">Back</button>
+            <button class="btn primary" id="btnSee">See Estimate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="estimate" class="card" style="margin-top:20px;display:none">
+    <div class="body">
+      <div class="flex" style="align-items:flex-start;gap:14px;flex-wrap:wrap">
+        <div>
+          <div class="chip" style="font-size:18px;font-weight:800">Your Monthly Estimate</div>
+          <div class="muted">This is an estimate. The final quote will reflect complexity and scope.</div>
+        </div>
+        <div class="pill" id="totalPill"><div class="muted">Estimated Total</div><div id="grand" style="font-size:34px;font-weight:900">$0/mo</div></div>
+      </div>
+
+      <div class="grid" style="margin-top:18px">
+        <div class="card"><div class="body">
+          <div class="muted" style="text-transform:uppercase;font-weight:700;font-size:12px">Bookkeeping</div>
+          <div id="bkLine" style="font-size:22px;font-weight:800">$0/mo</div>
+          <ul id="bkItems" style="margin:8px 0 0 16px;color:#475569;font-size:14px"></ul>
+        </div></div>
+        <div class="card"><div class="body">
+          <div class="muted" style="text-transform:uppercase;font-weight:700;font-size:12px">Tax and Planning</div>
+          <div class="divider"></div>
+          <div class="flex"><span>Tax Preparation</span><span id="taxPrepAmt">—</span></div>
+          <div class="flex"><span>Tax Planning</span><span id="taxPlanAmt">—</span></div>
+        </div></div>
+        <div class="card"><div class="body">
+          <div class="muted" style="text-transform:uppercase;font-weight:700;font-size:12px">Next steps</div>
+          <ol style="margin:8px 0 0 18px;color:#334155;font-size:14px">
+            <li>Click Book A Call and choose a time</li>
+            <li>We confirm scope and finalize a formal quote</li>
+            <li>Onboarding starts within three business days</li>
+          </ol>
+          <div class="row"><a href="#" id="bookBtn" class="btn primary" style="width:100%">Book A Call</a></div>
+          <div class="fine">No email required — this is a quick estimate only.</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stickyBar">
+    <div class="flex">
+      <div class="muted">Current estimate</div>
+      <div id="stickyTotal" style="font-size:22px;font-weight:900">$0/mo</div>
+      <div>
+        <button class="btn" id="editBtn">Edit Services</button>
+        <button class="btn primary" id="seeBtn2">See Estimate</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== PRICING CONFIG (edit these values) =====
+  const cfg = {
+    bookkeepingBaseByRevenue:[
+      {max:5000,price:250},
+      {max:15000,price:400},
+      {max:30000,price:600},
+      {max:50000,price:800},
+      {max:100000,price:1150},
+      {max:Infinity,price:1450}
+    ],
+    frequency:{Monthly:1,Quarterly:0.7,Annually:0.45},
+    // Cash basis only, modifier locked at 1
+    basisFactor:1,
+    // two brackets only
+    accountsAdd: {'1-5':0,'6-10':150},
+    addons:{billPay:200},
+    services:{taxPreparation:50,taxPlanning:125},
+    bookingUrl:'#'
+  };
+
+  // ===== STATE =====
+  const state = {
+    svcs:{taxPrep:false,taxPlan:false,books:true},
+    revenue:1000,
+    freq:'Monthly',
+    accts:'1-5',
+    bill:false,
+    bookingUrl:'#'
+  };
+
+  const $ = (sel)=>document.querySelector(sel);
+  const $$ = (sel)=>Array.from(document.querySelectorAll(sel));
+  const money = (n)=>n.toLocaleString(undefined,{style:'currency',currency:'USD',maximumFractionDigits:0});
+
+  function tierPrice(){
+    const t = cfg.bookkeepingBaseByRevenue.find(x=>state.revenue<=x.max) || cfg.bookkeepingBaseByRevenue.at(-1);
+    let p = t.price;
+    p *= cfg.basisFactor;
+    p *= cfg.frequency[state.freq];
+    p += cfg.accountsAdd[state.accts] || 0;
+    if(state.bill) p += cfg.addons.billPay;
+    return Math.round(p);
+  }
+
+  function servicesMonthly(){
+    let t=0; if(state.svcs.taxPrep) t+=cfg.services.taxPreparation; if(state.svcs.taxPlan) t+=cfg.services.taxPlanning; return t;
+  }
+
+  function total(){
+    let t = 0; if(state.svcs.books) t += tierPrice(); t += servicesMonthly(); return Math.round(t);
+  }
+
+  function refresh(){
+    // sticky + main totals
+    $('#stickyTotal').textContent = money(total())+"/mo";
+    $('#grand').textContent = money(total())+"/mo";
+
+    // bookkeeping panel
+    $('#bkLine').textContent = (state.svcs.books? money(tierPrice())+"/mo":"Not selected");
+    const ul = $('#bkItems');
+    ul.innerHTML = '';
+    if(state.svcs.books){
+      ['Revenue: '+money(state.revenue)+' annual','Update: '+state.freq,'Connected accounts: '+state.accts]\n        .concat(state.bill?['Bill Pay included']:[])\n        .forEach(v=>{const li=document.createElement('li');li.textContent=v;ul.appendChild(li);});\n    }\n\n    // service lines\n    $('#taxPrepAmt').textContent = state.svcs.taxPrep? money(cfg.services.taxPreparation): '—';\n    $('#taxPlanAmt').textContent = state.svcs.taxPlan? money(cfg.services.taxPlanning): '—';\n\n    // toggle details form\n    $('#bkForm').style.display = state.svcs.books? 'block':'none';\n    $('#bkDisabled').style.display = state.svcs.books? 'none':'block';\n\n    // chip badges on tiles\n    $$('.tile').forEach(t=>{\n      const key=t.getAttribute('data-svc');\n      const on = state.svcs[key];\n      t.classList.toggle('sel', !!on);\n      t.querySelector('.badge').textContent = on? 'Selected':'Add';\n    });\n  }\n\n  // events\n  $$('.tile').forEach(t=>{\n    t.addEventListener('click',()=>{\n      const k=t.getAttribute('data-svc');\n      state.svcs[k]=!state.svcs[k];\n      refresh();\n    })\n  });\n\n  $('#rev').addEventListener('input', e=>{state.revenue=+e.target.value; $('#revVal').textContent=money(state.revenue); refresh();});\n\n  function radioGroup(rootSel, list){\n    const box = $(rootSel); const opts = Array.from(box.children);\n    opts.forEach(o=>o.addEventListener('click', ()=>{\n      opts.forEach(x=>x.classList.remove('sel'));\n      o.classList.add('sel');\n      list(o.textContent.trim()); refresh();\n    }));\n  }\n\n  radioGroup('#freq',  (v)=> state.freq=v);\n  radioGroup('#accts', (v)=> state.accts=v);\n\n  function toggleSwitch(id, key){\n    const el = $(id); el.addEventListener('click',()=>{el.classList.toggle('on'); state[key]=!state[key]; refresh();});\n  }\n  toggleSwitch('#bill','bill');\n\n  // step buttons\n  $('#btnCont1').onclick = ()=>{ document.querySelector('.dot2').classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); };\n  $('#btnStep1').onclick  = ()=>{ window.scrollTo({top:0,behavior:'smooth'}); };\n  $('#btnBack2').onclick  = ()=>{ document.querySelector('.dot2').classList.remove('active'); window.scrollTo({top:0,behavior:'smooth'}); };\n  $('#btnSee').onclick    = ()=>{ document.querySelector('.dot3').classList.add('active'); $('#estimate').style.display='block'; refresh(); document.getElementById('estimate').scrollIntoView({behavior:'smooth'}); };\n  $('#seeBtn2').onclick   = ()=>{ $('#btnSee').click(); };\n  $('#editBtn').onclick   = ()=>{ document.querySelector('.dot3').classList.remove('active'); window.scrollTo({top:0,behavior:'smooth'}); };\n\n  // booking link\n  function setBookingUrl(url){ state.bookingUrl=url; $('#bookBtn').setAttribute('href',url); }\n  // Example: setBookingUrl('https://calendly.com/meridian/intro-call');\n\n  // init\n  refresh();\n</script>\n</body>\n</html>\n
